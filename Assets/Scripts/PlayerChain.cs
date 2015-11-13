@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PlayerChain : MonoBehaviour 
 {
 	[SerializeField]
-	Vector3 ChainLength;
+	float ChainLength;
 
 	[SerializeField]
 	float ChainSlack;
@@ -23,14 +23,28 @@ public class PlayerChain : MonoBehaviour
 		ChainAnchor = FindObjectOfType<PlayerManager>().GetComponent<PlayerManager>().Player1;
 		ChainTarget = FindObjectOfType<PlayerManager>().GetComponent<PlayerManager>().Player2;
 
-		ChainLength = new Vector3(CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) + ChainSlack, 
-		                          CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) + ChainSlack,
-		                          CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) + ChainSlack);
+		ChainLength = (CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) + ChainSlack);
+		CreateChain();
 	}
 
-	void DrawChain()
+	void CreateChain()
 	{
-		
+		Vector3 guide = Vector3.zero;
+		guide.x = ChainAnchor.transform.position.x + 0.3f;
+		Vector3 stop = Vector3.zero;
+		stop.x = ChainTarget.transform.position.x + 0.3f;
+		float numLinks = (ChainLength - ChainSlack) / LinkPrefab.transform.lossyScale.x;
+		for(int i = 0; i <= numLinks; i++)
+		{
+			if(CalcDis(guide, stop) > .5f)
+			{
+				guide.y = .2f;
+				Links.Add(Instantiate(LinkPrefab, guide, Quaternion.identity) as GameObject);
+				guide.x += LinkPrefab.transform.lossyScale.x;
+			}
+			else
+				break;
+		}
 	}
 
 	float CalcDis(Vector3 pos1, Vector3 pos2)
@@ -40,18 +54,10 @@ public class PlayerChain : MonoBehaviour
 		return Mathf.Sqrt(dis);
 	}
 
-//	Vector3 CheckDisplacment(GameObject a)
-//	{
-////		Vector3 a = Vector3.zero;
-////		if(CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) > ChainLength.x)
-////		{
-////			a.x = CalcDis(ChainAnchor.transform.position, ChainTarget.transform.position) - ChainLength;
-////		}
-//	}
-
 	// Update is called once per frame
 	void Update () 
 	{
+
 
 	}
 }
