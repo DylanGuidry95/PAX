@@ -218,7 +218,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &408556
 Transform:
   m_ObjectHideFlags: 1
@@ -590,8 +590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8dda6b4b5d18048989a2473eda6b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listeningForSetCam: CameraEvent
-  listeningForReTarget: EntityDied
+  listeningForSetCam: checkpoint
   startCam: 0
   activator1: {fileID: 0}
   activator2: {fileID: 0}
@@ -639,8 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8dda6b4b5d18048989a2473eda6b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listeningForSetCam: CameraEvent
-  listeningForReTarget: EntityDied
+  listeningForSetCam: 
   startCam: 0
   activator1: {fileID: 0}
   activator2: {fileID: 0}
@@ -655,8 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8dda6b4b5d18048989a2473eda6b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listeningForSetCam: CameraEvent
-  listeningForReTarget: EntityDied
+  listeningForSetCam: checkpoint
   startCam: 0
   activator1: {fileID: 0}
   activator2: {fileID: 0}
@@ -699,8 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8dda6b4b5d18048989a2473eda6b78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listeningForSetCam: CameraEvent
-  listeningForReTarget: EntityDied
+  listeningForSetCam: checkpoint
   startCam: 1
   activator1: {fileID: 0}
   activator2: {fileID: 0}

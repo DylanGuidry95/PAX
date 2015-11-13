@@ -3,84 +3,110 @@ using System.Collections;
 
 public class EnemyGuard : MonoBehaviour
 {
+	public STATES cstate;
     void Awake()
     {
-        Messenger.AddListener<string>("entitydied", Die);// Listens for the instance of its own death
+		rb = GetComponent<Rigidbody>();
+
+        Messenger.AddListener<string>("entitydied", Die);	// Listens for the instance of its own death, _Stats
         Messenger.MarkAsPermanent("entitydied");
+
+		fsm.AddState(STATES.INIT);
+		fsm.AddState(STATES.IDLE);
+		fsm.AddState(STATES.CHASING);
+		fsm.AddState(STATES.DEAD);
+
+		Callback<string> ToIdle;
+		Callback<string> ToChasing;
+		Callback<string> ToDead;
+		ToIdle = Idle;
+		ToChasing = Chasing;
+
+		fsm.AddTransition(STATES.INIT, 		STATES.IDLE, 		ToIdle);
+		fsm.AddTransition(STATES.IDLE,		STATES.CHASING,		ToChasing);
+		fsm.AddTransition(STATES.IDLE, 		STATES.DEAD, 		ToIdle);
+		fsm.AddTransition(STATES.CHASING, 	STATES.IDLE, 		ToIdle);
+		fsm.AddTransition(STATES.CHASING, 	STATES.DEAD, 		ToIdle);
+
+		fsm.m_currentState = STATES.INIT;
+		fsm.MakeTransitionTo(STATES.IDLE);
     }
+	
+	void Idle(string a_string)
+	{
+		target = null;	// Set target to nothing
+		StopAllCoroutines();
+	}
+	void Chasing(string a_string)
+	{
+		StartCoroutine(ChaseTarget());
+	}
+	
+	IEnumerator ChaseTarget()
+	{
+		RaycastHit hit;
 
-    void Start()
-    {
-        target = null;                  // Set target to nothing
-        rb = GetComponent<Rigidbody>(); // Get rigidbody component
-    }
+		while(fsm.m_currentState == STATES.CHASING)
+		{
+			yield return null;
+			rb.velocity = new Vector3(0, rb.velocity.y, 0);
 
-    /// <summary>
-    /// Coroutine for following a target
-    /// </summary>
-    IEnumerator Persue()
-    {
-        RaycastHit hit;
+			Vector3 currentPos = new Vector3(transform.position.x, 0, transform.position.z);
+			Vector3 targetPos  = new Vector3(target.transform.position.x, 0, target.transform.position.z);
 
-        while (target)                                                                                          // As long as there is a valid target...
-        {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);                                                         // Reset the velocity to prevent drifting
-                                                                                                                    //
-            Vector3 levelTarget =                                                                                   //
-                new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);        // Bring the target position down to the current elevation to prevent flying 
-            float dist = Vector3.Distance(transform.position, target.transform.position);                           // Get the distance from here to the target position
-                                                                                                                    //
-            Vector3 direction = (target.transform.position - transform.position).normalized;                                      // Get the direction the target is in
-            bool hasHit = Physics.Raycast(transform.position, direction, out hit, dist);                            // Check to see if anything is between here and the target
-                                                                                                                    //
-            if (hasHit && hit.transform.gameObject == target)                                                       // If there is nothing between here and the target, but still a target
-            {                                                                                                       //
-                Vector3 targetPos = new Vector3(target.transform.position.x, 0, target.transform.position.z);           // Get the target position minus elevation
-                Vector3 currentPos = new Vector3(transform.position.x, 0, transform.position.z);                        // Get the current position minus the elevation
-                Vector3 heading = Vector3.Normalize(targetPos - currentPos);                                            // Get the direction to move it towards the target
-                rb.AddForce(heading * speedConst * speed);                                                              // Move towards the target
+			Vector3 heading = Vector3.Normalize(targetPos - currentPos); 
 
-				if(target.transform.position.y - transform.position.y > 0.1f)
+			float yDist = target.transform.position.y - transform.position.y;
+
+			float dist = Vector3.Distance(transform.position, target.transform.position);                        	
+
+			bool hasHit = Physics.Raycast(transform.position, heading, out hit, dist);	                       
+			if (hasHit)
+			{
+				if(hit.transform.gameObject == target || hit.transform.CompareTag("Enemy"))                                                      
 				{
-					if(canJump)
+					rb.AddForce(heading * speedConst * speed);
+
+					if(yDist > 1f)
 					{
-						rb.AddForce(transform.up * speed * dist * 100);
-						canJump = !canJump;
+						if(canJump)
+						{
+							rb.AddForce(transform.up * speed * yDist * 100);
+							canJump = false;
+						}
 					}
 				}
-            }                                                                                                       //    
-            else                                                                                                    // If there is something btween here and the target
-            {                                                                                                       //
-                rb.velocity = new Vector3(0, rb.velocity.y, 0);                                                         // Don't move
-            }
+				Debug.DrawLine(transform.position, hit.transform.position, Color.blue);
+			}
 
-            // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING  // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING 
-            Debug.DrawLine(transform.position, levelTarget, Color.red);
-            // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING  // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING 
-
-            yield return null;  // Restarts the loop
-        }
-    }
+			Debug.DrawLine(transform.position, (transform.position + heading), Color.red);
+		}
+		fsm.MakeTransitionTo(STATES.IDLE);
+	}
 
     void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player") && target == null)
+	{
+		if (other.gameObject.CompareTag("Player") && target == null	)
         {
             target = other.gameObject;
-            StartCoroutine(Persue());
+			fsm.MakeTransitionTo(STATES.CHASING);
         }
     }
+
     void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject == target)
-            target = null;
+	{
+		if (other.gameObject == target)
+		{
+			fsm.MakeTransitionTo(STATES.IDLE);
+		}
+
     }
 
     void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+	{
+		if (other.gameObject.CompareTag("Player"))
         {
-            Messenger.Broadcast("modstat", other.gameObject.GetInstanceID().ToString(), "health", -1f);
+            //Messenger.Broadcast("modstat", other.gameObject.GetInstanceID().ToString(), "health", -1f);
         }
 		if(other.contacts[0].point.y <= transform.position.y)
 		{
@@ -99,6 +125,7 @@ public class EnemyGuard : MonoBehaviour
         Messenger.RemoveListener<string>("entitydied", Die);
     }
 
+////// VARIABLES // VARIABLES // VARIABLES // VARIABLES // VARIABLES 
     public float speed;
 
     public GameObject target;
@@ -111,4 +138,16 @@ public class EnemyGuard : MonoBehaviour
     Vector3 forward = new Vector3();
 
     Rigidbody rb;
+
+
+	public enum STATES
+	{
+		INIT,
+		IDLE,
+		TRACKING,
+		CHASING,
+		DEAD,
+	}
+	
+	_FSM<STATES> fsm = new _FSM<STATES>();
 }

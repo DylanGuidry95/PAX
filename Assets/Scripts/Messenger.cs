@@ -25,13 +25,20 @@
 //#define LOG_BROADCAST_MESSAGE
 //#define REQUIRE_LISTENER
 
+#define LOG_ADD_LISTENER_EDITORWINDOW
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 static internal class Messenger
 {
-    #region Internal variables
+
+
+	static public List<string> EditorWindowInfo = new List<string>();
+
+
+#region Internal variables
 
     //Disable the unused variable warning
 #pragma warning disable 0414
@@ -54,7 +61,6 @@ static internal class Messenger
 
         permanentMessages.Add(eventType);
     }
-
 
     static public void Cleanup()
     {
@@ -100,12 +106,18 @@ static internal class Messenger
     }
     #endregion
 
+
+
+
     #region Message logging and exception throwing
     static public void OnListenerAdding(string eventType, Delegate listenerBeingAdded)
     {
 #if LOG_ALL_MESSAGES || LOG_ADD_LISTENER
 		Debug.Log("MESSENGER OnListenerAdding \t\"" + eventType + "\"\t{" + listenerBeingAdded.Target + " -> " + listenerBeingAdded.Method + "}");
 #endif
+		#if LOG_ADD_LISTENER_EDITORWINDOW
+		EditorWindowInfo.Add(eventType+"    ("+listenerBeingAdded.Target+" -> " + listenerBeingAdded.Method + ") "); 
+		#endif
 
         if (!eventTable.ContainsKey(eventType))
         {

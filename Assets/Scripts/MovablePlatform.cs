@@ -11,30 +11,19 @@ public class MovablePlatform : MonoBehaviour
             AddPathNode();
         }
         gameObject.transform.position = _pathFlow[0];
-        StartCoroutine(FollowPath());
-        Messenger.AddListener<GameObject>("Chilled", OnCoolToggle);
-	}
+        StartCoroutine(StartItAll());
+        //Messenger.AddListener<GameObject>("Chilled", OnCoolToggle);
+    }
     
+    IEnumerator StartItAll()
+    {
+        yield return new WaitForSeconds(initDelay);
+        StartCoroutine(FollowPath());
+    }
+
     public void AddPathNode()
     {
         _pathFlow.Add(gameObject.transform.position);
-    }
-
-    private void OnCoolToggle(GameObject go) //*
-    {
-        if(go == gameObject)
-        {
-            if (_chilled)
-            {
-                _chilled = false;
-            }
-
-            else
-            {
-                _chilled = true;
-            }
-        }
-        
     }
 
     IEnumerator FollowPath()
@@ -78,7 +67,10 @@ public class MovablePlatform : MonoBehaviour
     [SerializeField]
     private bool lerpMotion = false;
 
-    private bool _chilled = false; //*
+    [SerializeField]
+    private float initDelay = 0;
+
+    //private bool _chilled = false; //*
 }
 
 ///

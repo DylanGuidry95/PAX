@@ -62,6 +62,7 @@ public class HealthStats : MonoBehaviour
         Messenger.MarkAsPermanent("takedamage");
         Messenger.AddListener<string>("gethealed", GetHealed);
         Messenger.MarkAsPermanent("gethealed");
+        
     }
     public virtual void OnDisable()
     {

@@ -70,7 +70,7 @@ public class PlayerStates : HealthStats
         //do death animations
         //do sounds
         //do everything associated with this object being "dead"
-        Debug.Log("FUUUUUUUUCK");
+        Debug.Log("FUHHH... FUH.. ");
         gameObject.SetActive(false);
         Messenger.Broadcast<string>("playerdied", gameObject.tag);
 

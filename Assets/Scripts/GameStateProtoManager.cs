@@ -17,14 +17,16 @@ public class GameStateProtoManager: MonoBehaviour
         print(msg);
 
         if (msg == "play->pause")
-            Time.timeScale = 0;
-        else if (msg == "pause->play")
-            Time.timeScale = 1;
-        //Test**
+			Time.timeScale = 0;
+		else if (msg == "pause->play")
+			Time.timeScale = 1;
+       //Test**
         else if (msg == "init->start")
-            Messenger.Broadcast("maketransition", STATES.PLAY);
+			Time.timeScale = 0;
+		else if (msg == "start->play")
+		         Time.timeScale = 1;
         //
-        else if (msg == "play->gameover" || msg == "pause->start")
+        else if (msg == "play->gameover" || msg == "pause->gameover")
             Messenger.Broadcast("maketransition", STATES.START);
         else if (msg == "gameover->start")
             Application.LoadLevel(Application.loadedLevel);

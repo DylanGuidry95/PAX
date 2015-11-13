@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class QuickTest : MonoBehaviour {
+public class QuickTest : MonoBehaviour
+{
 
-	void OnTriggerEnter(Collider col)
+    void Update()
     {
-        //Messenger.Broadcast()
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GameStateManager.ToPlay();
+        }
     }
 }

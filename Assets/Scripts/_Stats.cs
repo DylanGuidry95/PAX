@@ -3,24 +3,29 @@ using System.Collections;
 
 public class _Stats : MonoBehaviour
 {
+    void Awake()
+	{
+		m_maxHealth = m_health;		// Sets the health limit to the value assigned at start
+		m_maxMana = m_mana;			// Sets the mana limit to the value assigned at start
+        
+        Messenger.AddListener<string, string, float>("modstat", ModStat);	// Subscribes to the modifing of its own stats
+		Messenger.MarkAsPermanent("modstat");								// Prevents subscription loss during scene change
+	}
 	// DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING 
+    // you should probably take this ouit
 	void Start()
 	{
-		Messenger.Broadcast("modstat", gameObject.GetInstanceID().ToString(), "health", -7f);
-	}
+		
+        
+    }
 	// DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING // DEBUGGING 
 
 	/// <summary>
 	/// Awake this instance.
 	/// </summary>
-	void Awake()
-	{
-		m_maxHealth = m_health;		// Sets the health limit to the value assigned at start
-		m_maxMana = m_mana;			// Sets the mana limit to the value assigned at start
 
-		Messenger.AddListener<string, string, float>("modstat", ModStat);	// Subscribes to the modifing of its own stats
-		Messenger.MarkAsPermanent("modstat");								// Prevents subscription loss during scene change
-	}
+
+    
 
 	/// <summary>
 	/// Mods the stat.
