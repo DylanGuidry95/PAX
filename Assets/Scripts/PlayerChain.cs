@@ -45,7 +45,7 @@ public class PlayerChain : MonoBehaviour
 				{
 					Links[i].GetComponent<ChainLink>().prevLink = Links[i-1];
 					Links[i-1].GetComponent<ChainLink>().nextLink = Links[i];
-				}
+                }
 				if(i == 0)
 				{
 					Links[i].GetComponent<ChainLink>().prevLink = ChainAnchor;
