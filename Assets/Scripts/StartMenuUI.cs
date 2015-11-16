@@ -14,6 +14,7 @@ public class StartMenuUI : MonoBehaviour
 	public void playButton()
 	{
 		gameObject.SetActive(false);
+		MenuSystem.printMenus ();
 		GameStateManager.ToPlay();
 	}
 

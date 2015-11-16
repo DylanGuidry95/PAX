@@ -11,7 +11,7 @@ GameObject:
   - 65: {fileID: 6554456}
   - 114: {fileID: 11483806}
   m_Layer: 0
-  m_Name: CameraBroadcastTrigger
+  m_Name: CheckPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

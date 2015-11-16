@@ -18,7 +18,7 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
     public float lookSmoother = 3.0f;           // a smoothing setting for camera motion
     public bool useCurves = true;
     // このスイッチが入っていないとカーブは使われない
-    public float useCurvesHeight = 0.5f;        // カーブ補正の有効高さ（地面をすり抜けやすい時には大きくする）
+    public float useCurvesHeight = 0.5f;        
 
     // 以下キャラクターコントローラ用パラメタ
     // 前進速度
@@ -37,17 +37,10 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
     // CapsuleColliderで設定されているコライダのHeiht、Centerの初期値を収める変数
     private float orgColHight;
     private Vector3 orgVectColCenter;
-
-    private Animator anim;                          // キャラにアタッチされるアニメーターへの参照
-    private AnimatorStateInfo currentBaseState;         // base layerで使われる、アニメーターの現在の状態の参照
-
-    private GameObject cameraObject;    // メインカメラへの参照
+     
 
     // アニメーター各ステートへの参照
-    static int idleState = Animator.StringToHash("Base Layer.Idle");
-    static int locoState = Animator.StringToHash("Base Layer.Locomotion");
-    static int jumpState = Animator.StringToHash("Base Layer.Jump");
-    static int restState = Animator.StringToHash("Base Layer.Rest");
+    
 
     // 初期化
     void Start()
@@ -55,7 +48,7 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
         anim = GetComponent<Animator>();
         col = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
-        cameraObject = GameObject.FindWithTag("MainCamera");
+        
         orgColHight = col.height;
         orgVectColCenter = col.center;
     }
@@ -66,12 +59,36 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
         CONTROLLER1,
         CONTROLLER2,
         KEYBOARD1,
+        KEYBOARD2,
     }
 
-	public InputState inputType;
+    /// <summary>
+    /// set from inputhandler
+    /// </summary>
+    public InputState inputType;
+    
+    enum PlayerState
+    { 
+        INIT,
+        IDLE,
+        LOCO,
+        JUMP,
+        REST,
+    }
+    private PlayerState c_state = PlayerState.INIT;
+    private Animator anim;                          
+    private AnimatorStateInfo currentBaseState;         
+    static int idleState = Animator.StringToHash("Base Layer.Idle");
+    static int locoState = Animator.StringToHash("Base Layer.Locomotion");
+    static int jumpState = Animator.StringToHash("Base Layer.Jump");
+    static int restState = Animator.StringToHash("Base Layer.Rest");
+    static int punchState = Animator.StringToHash("Base Layer.Punch");
 
     void FixedUpdate()
     {
+    
+
+        #region Input
         ///DEFAULT  
         string jump = "Jump";
         float h = Input.GetAxis("Horizontal");
@@ -100,6 +117,7 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
                 break;
 
         }
+
         anim.SetFloat("Speed", v);
         anim.SetFloat("Direction", h);
         anim.speed = animSpeed;
@@ -121,15 +139,21 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
         {
             velocity *= backwardSpeed;
         }
-
+        #endregion input
+        
+        if (Input.GetButtonDown("Attack"))
+        {
+            Debug.Log("punch");
+            anim.SetTrigger("Punch");
+        }
         if (Input.GetButtonDown(jump))
         {
-
             if (currentBaseState.fullPathHash == locoState)
             {
                 if (!anim.IsInTransition(0))
                 {
                     rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
+                    c_state = PlayerState.JUMP;
                     anim.SetBool("Jump", true);
                 }
             }
@@ -140,7 +164,8 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
 
         transform.Rotate(0, h * rotateSpeed, 0);
 
-
+        //moving
+        
         if (currentBaseState.fullPathHash == locoState)
         {
             if (useCurves)
@@ -148,9 +173,9 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
                 resetCollider();
             }
         }
+        //jumping
         else if (currentBaseState.fullPathHash == jumpState)
-        {
-            //cameraObject.SendMessage("setCameraPositionJumpView");  
+        { 
             if (!anim.IsInTransition(0))
             {
 
@@ -182,7 +207,7 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
                 anim.SetBool("Jump", false);
             }
         }
- 
+        //idle
         else if (currentBaseState.fullPathHash == idleState)
         { 
             if (useCurves)
@@ -194,24 +219,19 @@ public class UnityChanControlScriptWithRigidBody : MonoBehaviour
                 anim.SetBool("Rest", true);
             }
         } 
+        //resting?
         else if (currentBaseState.fullPathHash == restState)
-        {
-            //cameraObject.SendMessage("setCameraPositionFrontView");		// カメラを正面に切り替える
-            // ステートが遷移中でない場合、Rest bool値をリセットする（ループしないようにする）
+        { 
             if (!anim.IsInTransition(0))
             {
                 anim.SetBool("Rest", false);
             }
         }
+   
     }
-
-
-
-
-    // キャラクターのコライダーサイズのリセット関数
+     
     void resetCollider()
-    {
-        // コンポーネントのHeight、Centerの初期値を戻す
+    { 
         col.height = orgColHight;
         col.center = orgVectColCenter;
     }

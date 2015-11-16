@@ -16,10 +16,13 @@ public class CreditMenuUI : MonoBehaviour {
 		textPos = Programmers.transform.position;
 		StartCoroutine ("credits");
 
+	}
+
+	void Awake()
+	{
 		MenuSystem.AddPrefab ("start->end", gameObject);	
 		MenuSystem.ListenerToTransition ("gamestatechanged");
 	}
-	
 
 	IEnumerator credits() 
 	{

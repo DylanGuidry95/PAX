@@ -2848,7 +2848,6 @@ GameObject:
   - 136: {fileID: 13646068}
   - 114: {fileID: 11487646}
   - 114: {fileID: 11435126}
-  - 114: {fileID: 11425066}
   - 114: {fileID: 11450800}
   m_Layer: 0
   m_Name: Skahdi
@@ -5643,25 +5642,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11425066
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12fe1e9301c474c4da3e96acc6851e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MovingTurnSpeed: 360
-  m_StationaryTurnSpeed: 180
-  m_JumpPower: 12
-  m_GravityMultiplier: 2
-  m_RunCycleLegOffset: .200000003
-  m_MoveSpeedMultiplier: 1
-  m_AnimSpeedMultiplier: 1
-  m_GroundCheckDistance: .100000001
 --- !u!114 &11435126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5673,12 +5653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b993bfa313ffab14a9e11a42403d3a03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BaseMovementSpeed: 10
-  m_RotateSpeed: .100000001
-  m_JumpPower: 3
-  Position: {x: 0, y: 0, z: 0}
-  Rotation: {x: 0, y: 0, z: 0}
-  Forward: {x: 0, y: 0, z: 0}
+  PlayerNumber: 0
 --- !u!114 &11450800
 MonoBehaviour:
   m_ObjectHideFlags: 1

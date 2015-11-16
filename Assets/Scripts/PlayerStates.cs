@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerStates : HealthStats
+public class PlayerStates : _Stats
 {
-    HealthStats healthStats;
+    _Stats healthStats;
     int intState;
     public enum STATES
     {
@@ -32,9 +32,8 @@ public class PlayerStates : HealthStats
         _fsm.m_currentState = STATES.ALIVE;
 
         handleDead = HandleDead;
-        _fsm.AddTransition(STATES.ALIVE, STATES.DEAD, handleDead); 
+        _fsm.AddTransition(STATES.ALIVE, STATES.DEAD, handleDead);
     }
-    
  
     // Callback EnterDeadState;
 
@@ -74,8 +73,11 @@ public class PlayerStates : HealthStats
         gameObject.SetActive(false);
         Messenger.Broadcast<string>("playerdied", gameObject.tag);
 
+        //I only do this because it was in the _Stats script's OnDead() function
+        //Messenger.RemoveListener<string, string, float>("modstat", ModStat);
+
     }
-    protected override void OnDead()
+    public override void OnDead()
     {
         _fsm.MakeTransitionTo(STATES.DEAD);
     }

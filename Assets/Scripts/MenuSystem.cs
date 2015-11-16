@@ -19,6 +19,20 @@ static public class MenuSystem
 	
 	static private void selfActivate(string argument)
 	{
-		menus [argument].SetActive(true);
+		if (menus.ContainsKey (argument)) 
+		{ 
+			menus [argument].SetActive (true);
+		} 
+		else
+			Debug.Log (argument + " not found");
 	}
+
+	static public void printMenus()
+	{
+		foreach (KeyValuePair<string, GameObject> Menu in menus) 
+		{
+			Debug.Log(Menu.Key);
+		}
+	}
+
 }

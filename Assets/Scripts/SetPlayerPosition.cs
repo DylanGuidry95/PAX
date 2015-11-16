@@ -10,6 +10,7 @@ public class SetPlayerPosition : MonoBehaviour
 
     void Awake()
     {
+        //listening for "checkpoint" to set a player to a position by the checkpoint
         Messenger.AddListener<GameObject, Transform>(listeningFor, SetPlayerPos);
 
         //keep track of players
@@ -25,20 +26,10 @@ public class SetPlayerPosition : MonoBehaviour
     {
         if (players.Count == 2 && o.tag == "Player" && broadcaster == trigger.transform)
         {
-            //if (Physics.Linecast(players[0].position, players[1].position) || 
-            //    Vector3.Distance(players[0].position, 
-            //    players[1].position) >= maxDistance)
-            //{
-            //if gameObject that triggered the event is player1, move player2
             if (o == players[0].gameObject)
-            {
                 players[1].position = transform.position;
-            }
             else
-            {
                 players[0].position = transform.position;
-            }
-            //}
         }
 
     }

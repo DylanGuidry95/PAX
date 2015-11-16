@@ -50,7 +50,7 @@ public class _Stats : MonoBehaviour
 	/// <summary>
 	/// Raises the dead event.
 	/// </summary>
-	void OnDead()
+	public virtual void OnDead()
 	{
 		Messenger.Broadcast("entitydied", GetInstanceID().ToString());
 		Messenger.RemoveListener<string, string, float>("modstat", ModStat);

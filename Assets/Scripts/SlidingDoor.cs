@@ -9,20 +9,11 @@ public class SlidingDoor : MonoBehaviour
 
     void Awake()
     {
+        //listening for "checkpoint" to activate the sliding door
         Messenger.AddListener<GameObject, Transform>(listeningFor, Activate);
 
         //grab the game object in the SlidingDoor hierarchy with the 'CameraBroadcast' component
         trigger = transform.root.GetComponentInChildren<CameraBroadcast>().gameObject.transform;
-        //trigger = t.name;
-        //BoxCollider[] children = GetComponentsInParent<BoxCollider>();
-        //foreach (Collider c in children)
-        //{
-        //    if (c.isTrigger == true)
-        //    {
-        //        activator = c.name;
-        //        return;
-        //    }
-        //}
     }
 
     void Activate(GameObject o,Transform broadcaster)
